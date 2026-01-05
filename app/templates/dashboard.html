@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan Prediction Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-3xl mx-auto bg-white p-8 mt-10 rounded-lg shadow">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Loan Prediction Dashboard</h1>
+        <div class="text-center text-gray-600 mb-6">
+            <p>Welcome back, <span class="font-semibold">{{ username }}</span>! Here's your loan analysis overview.</p>
+        </div>
+        <div class="flex flex-col md:flex-row justify-around gap-4 mb-8">
+            <div class="flex-1 bg-green-100 text-green-800 rounded p-4 text-center">
+                <div class="text-2xl font-bold">{{ total_loans }}</div>
+                <div class="text-sm">Total Loans</div>
+            </div>
+            <div class="flex-1 bg-blue-100 text-blue-800 rounded p-4 text-center">
+                <div class="text-2xl font-bold">{{ safe_loans_count }}</div>
+                <div class="text-sm">Safe Loans</div>
+            </div>
+            <div class="flex-1 bg-red-100 text-red-800 rounded p-4 text-center">
+                <div class="text-2xl font-bold">{{ risky_loans_count }}</div>
+                <div class="text-sm">Risky Loans</div>
+            </div>
+        </div>
+        <div class="flex flex-col md:flex-row justify-around gap-4 mb-8">
+            <a href="{% url 'predict_loan' %}" class="flex-1 bg-blue-600 text-white rounded p-4 text-center hover:bg-blue-700 transition">Predict New Loan</a>
+            <a href="{% url 'non_risky_loans' %}" class="flex-1 bg-green-600 text-white rounded p-4 text-center hover:bg-green-700 transition">View All Safe Loans</a>
+            <a href="{% url 'risky_loans' %}" class="flex-1 bg-red-600 text-white rounded p-4 text-center hover:bg-red-700 transition">View All Risky Loans</a>
+        </div>
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-center text-gray-700 mb-4">Your Recent Loans</h2>
+            {% if recent_loans %}
+                <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border rounded">
+                    <thead>
+                        <tr>
+                            <th class="px-3 py-2 border-b">Loan ID</th>
+                            <th class="px-3 py-2 border-b">Amount</th>
+                            <th class="px-3 py-2 border-b">Term</th>
+                            <th class="px-3 py-2 border-b">Interest Rate</th>
+                            <th class="px-3 py-2 border-b">Grade</th>
+                            <th class="px-3 py-2 border-b">Purpose</th>
+                            <th class="px-3 py-2 border-b">Risk Status</th>
+                            <th class="px-3 py-2 border-b">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loan in recent_loans %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2">#{{ loan.id }}</td>
+                            <td class="px-3 py-2">${{ loan.loan_amount|floatformat:0 }}</td>
+                            <td class="px-3 py-2">{{ loan.term }}</td>
+                            <td class="px-3 py-2">{{ loan.interest_rate }}%</td>
+                            <td class="px-3 py-2">{{ loan.grade }}</td>
+                            <td class="px-3 py-2">{{ loan.purpose }}</td>
+                            <td class="px-3 py-2">
+                                {% if loan.defaulter %}
+                                    <span class="text-red-600 font-bold">High Risk</span>
+                                {% else %}
+                                    <span class="text-green-600 font-bold">Low Risk</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-3 py-2">{{ loan.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            {% else %}
+                <div class="text-center text-gray-500 italic py-8 bg-gray-50 rounded">
+                    <h3 class="font-semibold">No loans yet</h3>
+                    <p>Start by predicting your first loan to see it appear here!</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="text-center mt-6">
+            <a href="{% url 'logout' %}" class="inline-block bg-gray-700 text-white px-6 py-2 rounded hover:bg-gray-900 transition">Logout</a>
+        </div>
+    </div>
+</body>
+</html> 

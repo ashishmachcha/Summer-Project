@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Prediction Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow max-w-2xl w-full">
+        <h1 class="text-2xl font-bold text-center text-blue-700 mb-6">Loan Prediction Result</h1>
+        {% if loan.defaulter %}
+            <div class="border-2 border-red-500 bg-red-50 text-red-700 p-4 rounded mb-6 text-center">
+        {% elif risk_level|lower == "low risk" %}
+            <div class="border-2 border-green-500 bg-green-50 text-green-700 p-4 rounded mb-6 text-center">
+        {% else %}
+            <div class="border-2 border-blue-500 bg-blue-50 text-blue-700 p-4 rounded mb-6 text-center">
+        {% endif %}
+            <h2 class="text-xl font-semibold mb-2">{{ risk_level }}</h2>
+            <p class="mb-2">{{ prediction_message }}</p>
+            {% if prediction %}
+                <p><strong>Risk Probability: {{ prediction|floatformat:4 }}</strong></p>
+            {% endif %}
+        </div>
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Loan Details</h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                <li><strong>Loan Amount:</strong> ${{ form_data.loan_amount|floatformat:2 }}</li>
+                <li><strong>Term:</strong> {{ form_data.term }}</li>
+                <li><strong>Interest Rate:</strong> {{ form_data.interest_rate }}%</li>
+                <li><strong>Installment:</strong> ${{ form_data.installment|floatformat:2 }}</li>
+                <li><strong>Grade:</strong> {{ form_data.grade }}</li>
+                <li><strong>Employment Length:</strong> {{ form_data.emp_length }}</li>
+                <li><strong>Home Ownership:</strong> {{ form_data.home_ownership }}</li>
+                <li><strong>Annual Income:</strong> ${{ form_data.annual_income|floatformat:2 }}</li>
+                <li><strong>Verification Status:</strong> {{ form_data.verification_status }}</li>
+                <li><strong>DTI:</strong> {{ form_data.dti }}</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Additional Information</h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                <li><strong>Delinquencies (2yrs):</strong> {{ form_data.delinq_2yrs }}</li>
+                <li><strong>Open Accounts:</strong> {{ form_data.open_acc }}</li>
+                <li><strong>Public Records:</strong> {{ form_data.pub_rec }}</li>
+                <li><strong>Revolving Utilization:</strong> {{ form_data.revol_util }}%</li>
+                <li><strong>Purpose:</strong> {{ form_data.purpose }}</li>
+                <li><strong>Initial List Status:</strong> {{ form_data.initial_list_status }}</li>
+                <li><strong>Total Late Fees:</strong> ${{ form_data.total_rec_late_fee|floatformat:2 }}</li>
+                <li><strong>Recoveries:</strong> ${{ form_data.recoveries|floatformat:2 }}</li>
+                <li><strong>Accounts Now Delinquent:</strong> {{ form_data.acc_now_delinq }}</li>
+                <li><strong>Total Collection Amount:</strong> ${{ form_data.total_coll_amt|floatformat:2 }}</li>
+            </ul>
+        </div>
+        <div class="flex flex-col md:flex-row justify-center gap-4 mb-6">
+            <a href="{% url 'dashboard' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-center">Dashboard</a>
+            <a href="{% url 'predict_form' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition text-center">New Prediction</a>
+            {% if loan.defaulter %}
+                <a href="{% url 'risky_loans' %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition text-center">View Risky Loans</a>
+            {% else %}
+                <a href="{% url 'non_risky_loans' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition text-center">View Safe Loans</a>
+            {% endif %}
+        </div>
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <strong>What this means:</strong>
+            {% if loan.defaulter %}
+                <p class="text-red-700"><strong>High Risk:</strong> This loan application shows characteristics commonly associated with default risk. Consider additional verification or higher interest rates.</p>
+            {% else %}
+                <p class="text-green-700"><strong>Low Risk:</strong> This loan application shows characteristics commonly associated with successful repayment. Consider standard approval process.</p>
+            {% endif %}
+            <p class="text-gray-600 italic">Note: This prediction is based on historical data patterns and should be used as one of many factors in loan decision-making.</p>
+        </div>
+    </div>
+</body>
+</html> 
